@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
 
@@ -56,10 +55,16 @@ export const getRachadinhaData = async (rachadinhaId: string): Promise<Rachadinh
     return rachadinhaData;
 };
 
-export const createRachadinha = async (userId: string, name: string) => {
+export const createRachadinha = async (payload: { userId: string, name: string, latitude?: number, longitude?: number }) => {
+    const { userId, name, latitude, longitude } = payload;
     const { data, error } = await supabase
         .from('rachadinhas')
-        .insert({ user_id: userId, name: name || 'Nova Rachadinha' })
+        .insert({
+            user_id: userId,
+            name: name || 'Nova Rachadinha',
+            latitude,
+            longitude
+        })
         .select()
         .single();
     if (error) throw error;
@@ -140,4 +145,3 @@ export const toggleItemParticipant = async (itemId: string, participantId: strin
         if (error) throw error;
     }
 };
-

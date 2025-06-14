@@ -28,7 +28,8 @@ const RachadinhaManager = () => {
     });
 
     const createMutation = useMutation({
-        mutationFn: (name: string) => createRachadinha(user!.id, name),
+        mutationFn: (variables: { name: string; latitude?: number; longitude?: number }) => 
+            createRachadinha({ userId: user!.id, ...variables }),
         onSuccess: (newRachadinha) => {
             queryClient.invalidateQueries({ queryKey: ['rachadinhas', user?.id] });
             setSelectedRachadinhaId(newRachadinha.id);
@@ -38,7 +39,7 @@ const RachadinhaManager = () => {
     
     const handleCreate = () => {
         if(newRachadinhaName.trim()){
-            createMutation.mutate(newRachadinhaName.trim());
+            createMutation.mutate({ name: newRachadinhaName.trim() });
         }
     };
     
@@ -55,10 +56,14 @@ const RachadinhaManager = () => {
         setIsLocating(true);
         navigator.geolocation.getCurrentPosition(
             (position) => {
+                const { latitude, longitude } = position.coords;
                 const rachadinhaName = `Rachadinha nas Proximidades`;
-                createMutation.mutate(rachadinhaName, {
-                    onSettled: () => setIsLocating(false)
-                });
+                createMutation.mutate(
+                    { name: rachadinhaName, latitude, longitude },
+                    {
+                        onSettled: () => setIsLocating(false)
+                    }
+                );
             },
             (error) => {
                 toast({

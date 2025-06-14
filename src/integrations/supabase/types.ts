@@ -116,6 +116,8 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          latitude: number | null
+          longitude: number | null
           name: string
           service_charge: number
           user_id: string
@@ -123,6 +125,8 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          latitude?: number | null
+          longitude?: number | null
           name: string
           service_charge?: number
           user_id: string
@@ -130,6 +134,8 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          latitude?: number | null
+          longitude?: number | null
           name?: string
           service_charge?: number
           user_id?: string
