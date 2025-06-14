@@ -57,7 +57,7 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
       }
   }, [debouncedServiceCharge, rachadinhaData, serviceChargeMutation]);
 
-  const createMutation = (fn: any, entity: string) => useMutation({
+  const createMutation = <TVariables,>(fn: (variables: TVariables) => Promise<unknown>, entity: string) => useMutation({
     mutationFn: fn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['rachadinha', rachadinhaId] });
