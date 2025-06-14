@@ -7,16 +7,19 @@ import RachadinhaCalculator from './RachadinhaCalculator';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, MapPin } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useToast } from "@/components/ui/use-toast";
 
 const RachadinhaManager = () => {
     const { user } = useAuth();
     const queryClient = useQueryClient();
+    const { toast } = useToast();
     const [selectedRachadinhaId, setSelectedRachadinhaId] = useState<string | null>(null);
     const [newRachadinhaName, setNewRachadinhaName] = useState('');
+    const [isLocating, setIsLocating] = useState(false);
 
     const { data: rachadinhas, isLoading } = useQuery({
         queryKey: ['rachadinhas', user?.id],
@@ -39,6 +42,35 @@ const RachadinhaManager = () => {
         }
     };
     
+    const handleCreateWithLocation = () => {
+        if (!navigator.geolocation) {
+            toast({
+                title: "Erro de Localização",
+                description: "Geolocalização não é suportada neste navegador.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        setIsLocating(true);
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const rachadinhaName = `Rachadinha nas Proximidades`;
+                createMutation.mutate(rachadinhaName, {
+                    onSettled: () => setIsLocating(false)
+                });
+            },
+            (error) => {
+                toast({
+                    title: "Erro de Localização",
+                    description: `Não foi possível obter sua localização: ${error.message}`,
+                    variant: "destructive",
+                });
+                setIsLocating(false);
+            }
+        );
+    };
+
     if (selectedRachadinhaId) {
         return <RachadinhaCalculator rachadinhaId={selectedRachadinhaId} onBack={() => setSelectedRachadinhaId(null)} />;
     }
@@ -58,17 +90,34 @@ const RachadinhaManager = () => {
                     <CardTitle className="text-2xl">Crie sua primeira rachadinha!</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-muted-foreground mb-6">Dê um nome para sua rachadinha para começar.</p>
-                    <div className="flex gap-2 max-w-sm mx-auto">
-                        <Input 
-                            value={newRachadinhaName}
-                            onChange={(e) => setNewRachadinhaName(e.target.value)}
-                            placeholder="Ex: Almoço da firma"
-                            onKeyPress={(e) => e.key === 'Enter' && handleCreate()}
-                        />
-                        <Button onClick={handleCreate} disabled={createMutation.isPending}>
-                            <PlusCircle className="mr-2 h-4 w-4"/>
-                            {createMutation.isPending ? "Criando..." : "Criar"}
+                    <p className="text-muted-foreground mb-6">Dê um nome para sua rachadinha para começar, ou use sua localização.</p>
+                    <div className="flex flex-col gap-4 max-w-sm mx-auto">
+                        <div className="flex gap-2">
+                            <Input 
+                                value={newRachadinhaName}
+                                onChange={(e) => setNewRachadinhaName(e.target.value)}
+                                placeholder="Ex: Almoço da firma"
+                                onKeyPress={(e) => e.key === 'Enter' && handleCreate()}
+                                disabled={createMutation.isPending || isLocating}
+                            />
+                            <Button onClick={handleCreate} disabled={createMutation.isPending || isLocating}>
+                                <PlusCircle className="mr-2 h-4 w-4"/>
+                                {createMutation.isPending && !isLocating ? "Criando..." : "Criar"}
+                            </Button>
+                        </div>
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                                <div className="w-full border-t border-border" />
+                            </div>
+                            <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-card px-2 text-muted-foreground">
+                                Ou
+                                </span>
+                            </div>
+                        </div>
+                        <Button onClick={handleCreateWithLocation} variant="outline" disabled={createMutation.isPending || isLocating}>
+                            <MapPin className="mr-2 h-4 w-4" />
+                            {isLocating ? "Localizando..." : "Criar com minha localização"}
                         </Button>
                     </div>
                 </CardContent>
@@ -97,16 +146,33 @@ const RachadinhaManager = () => {
                     <CardTitle>Criar Nova Rachadinha</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="flex gap-2 max-w-md">
-                        <Input 
-                            value={newRachadinhaName}
-                            onChange={(e) => setNewRachadinhaName(e.target.value)}
-                            placeholder="Ex: Jantar de sexta"
-                            onKeyPress={(e) => e.key === 'Enter' && handleCreate()}
-                        />
-                        <Button onClick={handleCreate} disabled={createMutation.isPending}>
-                            <PlusCircle className="mr-2 h-4 w-4"/>
-                            {createMutation.isPending ? "Criando..." : "Criar"}
+                    <div className="flex flex-col gap-4 max-w-md">
+                        <div className="flex gap-2">
+                            <Input 
+                                value={newRachadinhaName}
+                                onChange={(e) => setNewRachadinhaName(e.target.value)}
+                                placeholder="Ex: Jantar de sexta"
+                                onKeyPress={(e) => e.key === 'Enter' && handleCreate()}
+                                disabled={createMutation.isPending || isLocating}
+                            />
+                            <Button onClick={handleCreate} disabled={createMutation.isPending || isLocating}>
+                                <PlusCircle className="mr-2 h-4 w-4"/>
+                                {createMutation.isPending && !isLocating ? "Criando..." : "Criar"}
+                            </Button>
+                        </div>
+                         <div className="relative">
+                            <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                                <div className="w-full border-t border-border" />
+                            </div>
+                            <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-card px-2 text-muted-foreground">
+                                Ou
+                                </span>
+                            </div>
+                        </div>
+                        <Button onClick={handleCreateWithLocation} variant="outline" disabled={createMutation.isPending || isLocating}>
+                            <MapPin className="mr-2 h-4 w-4" />
+                            {isLocating ? "Localizando..." : "Criar com minha localização"}
                         </Button>
                     </div>
                 </CardContent>
