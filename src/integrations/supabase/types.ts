@@ -9,6 +9,91 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      item_participants: {
+        Row: {
+          item_id: string
+          participant_id: string
+        }
+        Insert: {
+          item_id: string
+          participant_id: string
+        }
+        Update: {
+          item_id?: string
+          participant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "item_participants_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "item_participants_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      items: {
+        Row: {
+          id: string
+          name: string
+          price: number
+          rachadinha_id: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          price: number
+          rachadinha_id: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          price?: number
+          rachadinha_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "items_rachadinha_id_fkey"
+            columns: ["rachadinha_id"]
+            isOneToOne: false
+            referencedRelation: "rachadinhas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      participants: {
+        Row: {
+          id: string
+          name: string
+          rachadinha_id: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          rachadinha_id: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          rachadinha_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participants_rachadinha_id_fkey"
+            columns: ["rachadinha_id"]
+            isOneToOne: false
+            referencedRelation: "rachadinhas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -24,6 +109,30 @@ export type Database = {
           avatar_url?: string | null
           full_name?: string | null
           id?: string
+        }
+        Relationships: []
+      }
+      rachadinhas: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          service_charge: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          service_charge?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          service_charge?: number
+          user_id?: string
         }
         Relationships: []
       }

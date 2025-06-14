@@ -1,5 +1,4 @@
-
-import RachadinhaCalculator from '@/components/RachadinhaCalculator';
+import RachadinhaManager from '@/components/RachadinhaManager';
 import { Button } from '@/components/ui/button';
 import { UtensilsCrossed, Users, Zap } from 'lucide-react';
 import Header from '@/components/Header';
@@ -73,7 +72,7 @@ const Index = () => {
              {loading ? (
               <div className="text-center"><p>Carregando...</p></div>
             ) : session ? (
-              <RachadinhaCalculator />
+              <RachadinhaManager />
             ) : (
               <Card className="text-center p-8">
                 <CardHeader>
