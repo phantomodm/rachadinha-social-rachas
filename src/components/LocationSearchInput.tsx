@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
@@ -42,7 +43,6 @@ const LocationSearchInput = ({ value, onValueChange, onPlaceSelect, disabled }: 
     id: 'google-map-script',
     language: 'pt-BR',
     region: 'BR',
-    disabled: !apiKey,
   });
 
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
