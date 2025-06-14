@@ -1,19 +1,19 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { getRachadinhas } from '@/lib/api';
-import RachadinhaCalculator from './RachadinhaCalculator';
 import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Skeleton } from './ui/skeleton';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import CreateRachadinhaForm from './CreateRachadinhaForm';
+import { useNavigate } from 'react-router-dom';
+import { PlusCircle, Zap, Archive } from 'lucide-react';
 
 const RachadinhaManager = () => {
     const { user } = useAuth();
-    const [selectedRachadinhaId, setSelectedRachadinhaId] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     const { data: rachadinhas, isLoading } = useQuery({
         queryKey: ['rachadinhas', user?.id],
@@ -21,58 +21,74 @@ const RachadinhaManager = () => {
         enabled: !!user,
     });
 
-    if (selectedRachadinhaId) {
-        return <RachadinhaCalculator rachadinhaId={selectedRachadinhaId} onBack={() => setSelectedRachadinhaId(null)} />;
-    }
-
-    if (isLoading) return (
-        <div className="space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-        </div>
-    );
-
-    if (!rachadinhas || rachadinhas.length === 0) {
+    if (isLoading) {
         return (
-            <Card className="text-center p-8 animate-fade-in">
-                <CardHeader>
-                    <CardTitle className="text-2xl">Crie sua primeira rachadinha!</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground mb-6">Pesquise por um local, digite um nome, ou use sua localização para começar.</p>
-                    <div className="max-w-sm mx-auto">
-                        <CreateRachadinhaForm onRachadinhaCreated={setSelectedRachadinhaId} />
-                    </div>
-                </CardContent>
-            </Card>
+            <div className="space-y-4">
+                <Skeleton className="h-24 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+            </div>
         );
     }
     
     return (
         <div className="animate-fade-in space-y-8">
+            <div>
+                <Button size="lg" className="w-full" onClick={() => navigate('/create-rachadinha')}>
+                    <PlusCircle className="mr-2" />
+                    Começar uma Rachadinha!
+                </Button>
+            </div>
+
+            {(!rachadinhas || rachadinhas.length === 0) && (
+                <Card className="text-center p-8">
+                    <CardHeader>
+                        <Zap className="mx-auto h-12 w-12 text-primary" />
+                        <CardTitle className="mt-4 text-2xl">Nenhuma rachadinha por aqui</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground">Que tal começar uma agora?</p>
+                    </CardContent>
+                </Card>
+            )}
+
+            {rachadinhas && rachadinhas.length > 0 && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Minhas Rachadinhas Ativas</CardTitle>
+                        <CardDescription>Continue de onde parou.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                        {rachadinhas.map(r => (
+                            <Button
+                                key={r.id}
+                                variant="outline"
+                                className="w-full justify-between h-16 text-left"
+                                onClick={() => navigate(`/rachadinha/${r.id}`)}
+                            >
+                                <div className="flex flex-col">
+                                    <span className="font-semibold">{r.name}</span>
+                                    <span className="text-sm text-muted-foreground">
+                                        Criada em {format(new Date(r.created_at), "dd/MM/yyyy", { locale: ptBR })}
+                                    </span>
+                                </div>
+                                <span className="text-sm text-muted-foreground">{format(new Date(r.created_at), "HH:mm", { locale: ptBR })}</span>
+                            </Button>
+                        ))}
+                    </CardContent>
+                </Card>
+            )}
+
             <Card>
                 <CardHeader>
-                    <CardTitle>Suas Rachadinhas</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                    {rachadinhas.map(r => (
-                        <Button key={r.id} variant="outline" className="w-full justify-between h-14 text-left" onClick={() => setSelectedRachadinhaId(r.id)}>
-                            <span className="font-semibold">{r.name}</span>
-                            <span className="text-sm text-muted-foreground">{format(new Date(r.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</span>
-                        </Button>
-                    ))}
-                </CardContent>
-            </Card>
-
-             <Card>
-                <CardHeader>
-                    <CardTitle>Criar Nova Rachadinha</CardTitle>
+                    <CardTitle className="flex items-center">
+                        <Archive className="mr-2 h-5 w-5 text-muted-foreground" />
+                        Rachadinhas Anteriores
+                    </CardTitle>
+                    <CardDescription>Suas contas já finalizadas.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="max-w-md">
-                        <CreateRachadinhaForm onRachadinhaCreated={setSelectedRachadinhaId} />
-                    </div>
+                    <p className="text-muted-foreground text-sm">Nenhuma rachadinha anterior encontrada.</p>
                 </CardContent>
             </Card>
         </div>

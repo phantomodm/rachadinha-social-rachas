@@ -25,9 +25,11 @@ const Index = () => {
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
             A forma mais fácil e divertida de dividir a conta com a galera. Chega de confusão na hora de pagar!
           </p>
-          <Button size="lg" onClick={scrollToCalculator}>
-            Começar uma Rachadinha
-            <Zap className="ml-2 h-5 w-5"/>
+          <Button size="lg" asChild>
+            <Link to="/create-rachadinha">
+              Começar uma Rachadinha
+              <Zap className="ml-2 h-5 w-5"/>
+            </Link>
           </Button>
         </section>
 
