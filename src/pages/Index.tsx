@@ -2,14 +2,21 @@
 import RachadinhaCalculator from '@/components/RachadinhaCalculator';
 import { Button } from '@/components/ui/button';
 import { UtensilsCrossed, Users, Zap } from 'lucide-react';
+import Header from '@/components/Header';
+import { useAuth } from '@/contexts/AuthContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
 
 const Index = () => {
+  const { session, loading } = useAuth();
+
   const scrollToCalculator = () => {
     document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <Header />
       <main className="container mx-auto px-4 py-8 md:py-16">
         {/* Hero Section */}
         <section className="text-center py-16 md:py-24 animate-fade-in">
@@ -63,7 +70,23 @@ const Index = () => {
         <section id="calculator" className="py-16">
           <h2 className="text-3xl font-bold text-center mb-12">Sua Rachadinha</h2>
           <div className="max-w-4xl mx-auto">
-            <RachadinhaCalculator />
+             {loading ? (
+              <div className="text-center"><p>Carregando...</p></div>
+            ) : session ? (
+              <RachadinhaCalculator />
+            ) : (
+              <Card className="text-center p-8">
+                <CardHeader>
+                  <CardTitle className="text-2xl">Faça login para começar</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-6">Você precisa estar logado para criar e gerenciar uma rachadinha.</p>
+                  <Button asChild size="lg">
+                    <Link to="/auth">Fazer Login ou Criar Conta</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </section>
 
