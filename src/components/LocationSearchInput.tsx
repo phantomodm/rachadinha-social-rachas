@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
@@ -87,7 +86,7 @@ const LocationSearchInput = ({ value, onValueChange, onPlaceSelect, disabled }: 
     return (
         <Input
             type="text"
-            placeholder="Nome da rachadinha (Ex: Jantar de sexta)"
+            placeholder="Pesquisar local ou digitar nome"
             value={value}
             onChange={handleInputChange}
             disabled={disabled}
