@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { UserPlus, Users, ArrowRight, Link as LinkIcon, Trash2, BookUser } from 'lucide-react';
+import { UserPlus, Users, ArrowRight, Link as LinkIcon, Trash2, BookUser, Share2 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import useRachadinha from '@/hooks/useRachadinha';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -28,6 +27,23 @@ const AddParticipantsPage = () => {
     removeParticipantMutation,
     bulkAddParticipantsMutation,
   } = useRachadinha(id!);
+
+  const handleWhatsAppInvite = () => {
+    if (!rachadinhaData) return;
+    const inviteLink = `${window.location.origin}/rachadinha/${id}`;
+    const message = `Você foi convidado para a rachadinha "${rachadinhaData.name}"! Entre pelo link: ${inviteLink}`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: `Convite para Rachadinha: ${rachadinhaData.name}`,
+            text: `Entre na rachadinha "${rachadinhaData.name}".`,
+            url: inviteLink,
+        }).catch((error) => console.log('Erro ao compartilhar', error));
+    } else {
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    }
+  };
 
   if (isLoadingRachadinha) {
     return (
@@ -145,14 +161,20 @@ const AddParticipantsPage = () => {
                   <div className="w-full border-t border-border" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">Ou</span>
+                  <span className="bg-card px-2 text-muted-foreground">Ou convide de outras formas</span>
                 </div>
               </div>
               
-              <Button variant="outline" className="w-full" onClick={() => setInviteDialogOpen(true)}>
-                <LinkIcon className="mr-2 h-4 w-4" />
-                Convidar por Link / QR Code
-              </Button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Button variant="outline" className="w-full" onClick={handleWhatsAppInvite}>
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Convidar via WhatsApp
+                </Button>
+                <Button variant="outline" className="w-full" onClick={() => setInviteDialogOpen(true)}>
+                  <LinkIcon className="mr-2 h-4 w-4" />
+                  Link / QR Code
+                </Button>
+              </div>
 
               <div className="pt-4 flex justify-end">
                 <Button onClick={() => navigate(`/rachadinha/${id}`)}>
