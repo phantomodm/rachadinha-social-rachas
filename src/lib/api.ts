@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
 
@@ -6,6 +5,7 @@ export type Rachadinha = Database['public']['Tables']['rachadinhas']['Row'];
 export type Participant = Database['public']['Tables']['participants']['Row'];
 export type Item = Database['public']['Tables']['items']['Row'];
 export type ItemParticipant = Database['public']['Tables']['item_participants']['Row'];
+export type Vendor = Database['public']['Tables']['vendors']['Row'];
 
 export type ItemWithParticipants = Item & {
     item_participants: { participant_id: string }[]
@@ -14,6 +14,7 @@ export type ItemWithParticipants = Item & {
 export type RachadinhaData = Rachadinha & {
     participants: Participant[];
     items: ItemWithParticipants[];
+    vendors: Vendor | null;
 };
 
 // RACHADINHAS
@@ -34,7 +35,8 @@ export const getRachadinhaData = async (rachadinhaId: string): Promise<Rachadinh
         .select(`
             *,
             participants (*),
-            items (*, item_participants(participant_id))
+            items (*, item_participants(participant_id)),
+            vendors (*)
         `)
         .eq('id', rachadinhaId)
         .order('created_at', { foreignTable: 'items', ascending: true })
@@ -168,3 +170,4 @@ export const toggleItemParticipant = async (itemId: string, participantId: strin
         if (error) throw error;
     }
 };
+

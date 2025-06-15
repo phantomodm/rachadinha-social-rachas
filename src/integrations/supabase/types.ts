@@ -162,6 +162,7 @@ export type Database = {
       vendors: {
         Row: {
           created_at: string
+          has_menu: boolean
           id: string
           latitude: number | null
           longitude: number | null
@@ -169,6 +170,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          has_menu?: boolean
           id?: string
           latitude?: number | null
           longitude?: number | null
@@ -176,6 +178,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          has_menu?: boolean
           id?: string
           latitude?: number | null
           longitude?: number | null

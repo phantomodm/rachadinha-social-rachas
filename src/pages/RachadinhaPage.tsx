@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import RachadinhaCalculator from '@/components/RachadinhaCalculator';
@@ -47,6 +46,7 @@ const RachadinhaPage = () => {
                             <TableNumberInput
                                 rachadinhaId={id}
                                 isPartner={!!rachadinhaData.vendor_id}
+                                rachadinhaData={rachadinhaData}
                             />
                         )}
                         <RachadinhaCalculator rachadinhaId={id} onBack={handleBack} />
