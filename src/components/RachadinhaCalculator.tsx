@@ -33,8 +33,10 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
     addParticipantMutation,
     bulkAddParticipantsMutation,
     removeParticipantMutation,
+    updateParticipantMutation,
     addItemMutation,
     removeItemMutation,
+    updateItemMutation,
     toggleItemParticipantMutation,
     handleAddParticipant,
     handleAddItem,
@@ -76,6 +78,7 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
         handleAddParticipant={handleAddParticipant}
         addParticipantMutation={addParticipantMutation}
         removeParticipantMutation={removeParticipantMutation}
+        updateParticipantMutation={updateParticipantMutation}
         bulkAddParticipantsMutation={bulkAddParticipantsMutation}
         isGuest={isGuest}
         guestSession={guestSession}
@@ -92,6 +95,7 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
           setNewItemPrice={setNewItemPrice}
           addItemMutation={addItemMutation}
           removeItemMutation={removeItemMutation}
+          updateItemMutation={updateItemMutation}
           toggleItemParticipantMutation={toggleItemParticipantMutation}
         />
       )}

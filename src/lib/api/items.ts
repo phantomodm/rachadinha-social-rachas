@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 // ITEMS
@@ -44,4 +43,12 @@ export const toggleItemParticipant = async (itemId: string, participantId: strin
             .insert({ item_id: itemId, participant_id: participantId });
         if (error) throw error;
     }
+};
+
+export const updateItem = async ({ itemId, name, price }: { itemId: string, name: string, price: number }) => {
+    const { error } = await supabase
+        .from('items')
+        .update({ name, price })
+        .eq('id', itemId);
+    if (error) throw error;
 };

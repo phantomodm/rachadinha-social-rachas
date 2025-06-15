@@ -30,3 +30,11 @@ export const bulkAddParticipants = async (rachadinhaId: string, names: string[])
     if (error) throw error;
     return data;
 };
+
+export const updateParticipant = async ({ participantId, name }: { participantId: string, name: string }) => {
+    const { error } = await supabase
+        .from('participants')
+        .update({ name })
+        .eq('id', participantId);
+    if (error) throw error;
+};

@@ -85,7 +85,9 @@ const useRachadinha = (rachadinhaId: string) => {
   });
 
   const removeParticipantMutation = wrapMutation(mutations.removeParticipantMutation, !isGuest, 'Convidados não podem remover participantes.');
+  const updateParticipantMutation = wrapMutation(mutations.updateParticipantMutation, !isGuest, 'Convidados não podem editar participantes.');
   const removeItemMutation = wrapMutation(mutations.removeItemMutation, !isGuest, 'Convidados não podem remover itens.');
+  const updateItemMutation = wrapMutation(mutations.updateItemMutation, !isGuest, 'Convidados não podem editar itens.');
 
   const toggleItemParticipantMutation = {
     ...mutations.toggleItemParticipantMutation,
@@ -115,8 +117,10 @@ const useRachadinha = (rachadinhaId: string) => {
     addParticipantMutation: mutations.addParticipantMutation,
     bulkAddParticipantsMutation: wrapMutation(mutations.bulkAddParticipantsMutation, !isGuest, 'Convidados não podem adicionar contatos.'),
     removeParticipantMutation,
+    updateParticipantMutation,
     addItemMutation: mutations.addItemMutation,
     removeItemMutation,
+    updateItemMutation,
     toggleItemParticipantMutation,
     handleAddParticipant,
     handleAddItem,

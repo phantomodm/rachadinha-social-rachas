@@ -5,8 +5,10 @@ import {
   updateServiceCharge,
   addParticipant,
   removeParticipant,
+  updateParticipant,
   addItem,
   removeItem,
+  updateItem,
   toggleItemParticipant,
   bulkAddParticipants,
 } from '@/lib/api';
@@ -38,8 +40,11 @@ export const useRachadinhaMutations = (rachadinhaId: string) => {
     const addParticipantMutation = createMutation((name: string) => addParticipant(rachadinhaId, name), 'adicionar participante');
     const bulkAddParticipantsMutation = createMutation((names: string[]) => bulkAddParticipants(rachadinhaId, names), 'adicionar participantes');
     const removeParticipantMutation = createMutation(removeParticipant, 'remover participante');
+    const updateParticipantMutation = createMutation(updateParticipant, 'atualizar participante');
+
     const addItemMutation = createMutation((vars: { name: string, price: number, participantIds: string[] }) => addItem(rachadinhaId, vars.name, vars.price, vars.participantIds), 'adicionar item');
     const removeItemMutation = createMutation(removeItem, 'remover item');
+    const updateItemMutation = createMutation(updateItem, 'atualizar item');
     const toggleItemParticipantMutation = createMutation((vars: { itemId: string, participantId: string, isMember: boolean }) => toggleItemParticipant(vars.itemId, vars.participantId, vars.isMember), 'atualizar item');
 
     return {
@@ -47,8 +52,10 @@ export const useRachadinhaMutations = (rachadinhaId: string) => {
         addParticipantMutation,
         bulkAddParticipantsMutation,
         removeParticipantMutation,
+        updateParticipantMutation,
         addItemMutation,
         removeItemMutation,
+        updateItemMutation,
         toggleItemParticipantMutation,
     };
 };

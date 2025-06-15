@@ -1,11 +1,12 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { UserPlus, Users } from 'lucide-react';
 import { RachadinhaData } from '@/lib/api';
 import { UseMutationResult } from '@tanstack/react-query';
-import ParticipantList from '../add-participants/ParticipantList';
+import EditableParticipantList from './EditableParticipantList';
 import InvitationOptions from '../add-participants/InvitationOptions';
 import InviteDialog from './InviteDialog';
 import AddFromContactsDialog from './AddFromContactsDialog';
@@ -18,6 +19,7 @@ interface ParticipantsCardProps {
   handleAddParticipant: () => void;
   addParticipantMutation: UseMutationResult<unknown, Error, string, unknown>;
   removeParticipantMutation: UseMutationResult<unknown, Error, string, unknown>;
+  updateParticipantMutation: UseMutationResult<unknown, Error, { participantId: string; name: string; }, unknown>;
   bulkAddParticipantsMutation: UseMutationResult<unknown, Error, string[], unknown>;
   isGuest: boolean;
   guestSession?: GuestSession;
@@ -31,6 +33,7 @@ const ParticipantsCard = ({
   handleAddParticipant,
   addParticipantMutation,
   removeParticipantMutation,
+  updateParticipantMutation,
   bulkAddParticipantsMutation,
   isGuest,
   guestSession,
@@ -72,7 +75,12 @@ const ParticipantsCard = ({
           <CardTitle className="flex items-center gap-2"><Users className="text-primary"/>Galera da Rachadinha</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <ParticipantList participants={participants} removeParticipantMutation={removeParticipantMutation} />
+          <EditableParticipantList 
+            participants={participants} 
+            removeParticipantMutation={removeParticipantMutation}
+            updateParticipantMutation={updateParticipantMutation}
+            isGuest={isGuest}
+          />
 
           {isGuest && guestSession && handleLogoutGuest && (
             <div className="p-3 bg-muted/50 rounded-lg text-center">
