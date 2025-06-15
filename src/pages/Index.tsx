@@ -28,12 +28,22 @@ const Index = () => {
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
             A forma mais fácil e divertida de dividir a conta com a galera. Chega de confusão na hora de pagar!
           </p>
-          <Button size="lg" asChild>
-            <Link to="/create-rachadinha">
-              Começar uma Rachadinha
-              <Zap className="ml-2 h-5 w-5"/>
-            </Link>
-          </Button>
+          <div className="flex flex-wrap justify-center items-center gap-4">
+            <Button size="lg" asChild>
+              <Link to="/create-rachadinha">
+                Começar uma Rachadinha
+                <Zap className="ml-2 h-5 w-5"/>
+              </Link>
+            </Button>
+            {session && (
+              <Button size="lg" variant="outline" asChild>
+                <Link to="/contacts">
+                  <Users className="mr-2 h-5 w-5"/>
+                  Meus Contatos
+                </Link>
+              </Button>
+            )}
+          </div>
         </section>
 
         {/* How it Works Section */}

@@ -183,3 +183,35 @@ export const getUserProfile = async (userId: string) => {
     }
     return data;
 };
+
+export type Contact = Database['public']['Tables']['contacts']['Row'];
+
+// CONTACTS
+export const getContacts = async (userId: string) => {
+    const { data, error } = await supabase
+        .from('contacts')
+        .select('id, name, created_at')
+        .eq('user_id', userId)
+        .order('name', { ascending: true });
+
+    if (error) throw error;
+    return data;
+};
+
+export const addContact = async (userId: string, name: string) => {
+    const { data, error } = await supabase
+        .from('contacts')
+        .insert({ user_id: userId, name })
+        .select()
+        .single();
+    if (error) throw error;
+    return data;
+};
+
+export const removeContact = async (contactId: string) => {
+    const { error } = await supabase
+        .from('contacts')
+        .delete()
+        .eq('id', contactId);
+    if (error) throw error;
+};
