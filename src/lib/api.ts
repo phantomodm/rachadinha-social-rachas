@@ -19,7 +19,7 @@ export type RachadinhaData = Rachadinha & {
 export const getRachadinhas = async (userId: string) => {
     const { data, error } = await supabase
         .from('rachadinhas')
-        .select('id, name, created_at')
+        .select('id, name, created_at, status')
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
@@ -75,6 +75,17 @@ export const updateServiceCharge = async (rachadinhaId: string, serviceCharge: n
     const { data, error } = await supabase
         .from('rachadinhas')
         .update({ service_charge: serviceCharge })
+        .eq('id', rachadinhaId)
+        .select()
+        .single();
+    if (error) throw error;
+    return data;
+};
+
+export const updateRachadinhaStatus = async (rachadinhaId: string, status: 'active' | 'archived') => {
+    const { data, error } = await supabase
+        .from('rachadinhas')
+        .update({ status })
         .eq('id', rachadinhaId)
         .select()
         .single();
