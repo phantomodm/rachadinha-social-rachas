@@ -90,40 +90,78 @@ const useRachadinha = (rachadinhaId: string) => {
   };
 
   const calculation = useMemo(() => {
-    if (!rachadinhaData) return { participantTotals: {}, totalBill: 0, totalServiceCharge: 0, totalWithoutService: 0 };
+    if (!rachadinhaData) return { participantBreakdowns: {}, participantTotals: {}, totalBill: 0, totalServiceCharge: 0, totalWithoutService: 0, totalRachadinhaFee: 0 };
     
-    const { participants, items, service_charge } = rachadinhaData;
-    const participantTotals: Record<string, number> = {};
-    participants.forEach(p => participantTotals[p.id] = 0);
+    const { participants, items, service_charge, rachadinha_fee } = rachadinhaData;
+
+    const participantBreakdowns: Record<string, {
+        individualItemsTotal: number;
+        sharedItemsShare: number;
+        subtotal: number;
+        serviceChargePortion: number;
+        rachadinhaFee: number;
+        total: number;
+    }> = {};
+
+    let totalConsumed = 0;
+
+    participants.forEach(p => {
+        participantBreakdowns[p.id] = {
+            individualItemsTotal: 0,
+            sharedItemsShare: 0,
+            subtotal: 0,
+            serviceChargePortion: 0,
+            rachadinhaFee: Number(rachadinha_fee || 0),
+            total: 0
+        };
+    });
 
     items.forEach(item => {
-      const participantIds = item.item_participants.map(ip => ip.participant_id);
-      if (participantIds.length > 0) {
-        const share = Number(item.price) / participantIds.length;
-        participantIds.forEach(pId => {
-          if (participantTotals[pId] !== undefined) {
-            participantTotals[pId] += share;
-          }
-        });
-      }
-    });
-    
-    const totalWithoutService = Object.values(participantTotals).reduce((sum, total) => sum + total, 0);
-    const totalServiceCharge = totalWithoutService * (Number(service_charge) / 100);
-
-    const finalTotals: Record<string, number> = {};
-    participants.forEach(p => {
-        const individualTotal = participantTotals[p.id] || 0;
-        if (totalWithoutService > 0) {
-            const proportionalServiceCharge = (individualTotal / totalWithoutService) * totalServiceCharge;
-            finalTotals[p.id] = individualTotal + proportionalServiceCharge;
-        } else {
-            finalTotals[p.id] = 0;
+        const participantIds = item.item_participants.map(ip => ip.participant_id);
+        const price = Number(item.price);
+        
+        if (participantIds.length > 0) {
+            if (participantIds.length === 1) { // Individual item
+                const pId = participantIds[0];
+                if (participantBreakdowns[pId]) {
+                    participantBreakdowns[pId].individualItemsTotal += price;
+                }
+            } else { // Shared item
+                const share = price / participantIds.length;
+                participantIds.forEach(pId => {
+                    if (participantBreakdowns[pId]) {
+                        participantBreakdowns[pId].sharedItemsShare += share;
+                    }
+                });
+            }
         }
     });
 
-    const totalBill = totalWithoutService + totalServiceCharge;
-    return { participantTotals: finalTotals, totalBill, totalServiceCharge, totalWithoutService };
+    participants.forEach(p => {
+        const breakdown = participantBreakdowns[p.id];
+        breakdown.subtotal = breakdown.individualItemsTotal + breakdown.sharedItemsShare;
+        totalConsumed += breakdown.subtotal;
+    });
+    
+    const totalServiceCharge = totalConsumed * (Number(service_charge) / 100);
+    const totalRachadinhaFee = participants.length * Number(rachadinha_fee || 0);
+
+    participants.forEach(p => {
+        const breakdown = participantBreakdowns[p.id];
+        if (totalConsumed > 0) {
+            breakdown.serviceChargePortion = (breakdown.subtotal / totalConsumed) * totalServiceCharge;
+        }
+        breakdown.total = breakdown.subtotal + breakdown.serviceChargePortion + breakdown.rachadinhaFee;
+    });
+
+    const totalBill = totalConsumed + totalServiceCharge + totalRachadinhaFee;
+
+    const participantTotals: Record<string, number> = {};
+    participants.forEach(p => {
+        participantTotals[p.id] = participantBreakdowns[p.id]?.total || 0;
+    });
+
+    return { participantTotals, participantBreakdowns, totalBill, totalServiceCharge, totalWithoutService: totalConsumed, totalRachadinhaFee };
   }, [rachadinhaData]);
 
   return {
@@ -151,4 +189,3 @@ const useRachadinha = (rachadinhaId: string) => {
 };
 
 export default useRachadinha;
-
