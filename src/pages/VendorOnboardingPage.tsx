@@ -1,30 +1,31 @@
 
-import { useState } from 'react';
 import Header from '@/components/Header';
 import { Link, Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getVendorByUserId } from '@/lib/api';
+import { useQuery } from '@tanstack/react-query';
+import { getVendorByUserId, getPixKeysByVendorId } from '@/lib/api';
 import { Loader2, CheckCircle } from 'lucide-react';
 import VendorDetailsForm from '@/components/VendorDetailsForm';
 
 const VendorOnboardingPage = () => {
     const { user, loading: authLoading } = useAuth();
-    const [onboardingComplete, setOnboardingComplete] = useState(false);
     
     const { data: vendor, isLoading: vendorLoading } = useQuery({
       queryKey: ['vendor', user?.id],
       queryFn: () => getVendorByUserId(user!.id),
       enabled: !!user,
-      onSuccess: (data) => {
-        if (data?.name) {
-          setOnboardingComplete(true);
-        }
-      }
     });
 
-    const isLoading = authLoading || vendorLoading;
+    const { data: pixKeys, isLoading: pixKeysLoading } = useQuery({
+        queryKey: ['vendorPixKeys', vendor?.id],
+        queryFn: () => getPixKeysByVendorId(vendor!.id),
+        enabled: !!vendor,
+    });
+
+    const isLoading = authLoading || vendorLoading || (!!vendor && pixKeysLoading);
+
+    const onboardingComplete = !!vendor?.name && !!pixKeys && pixKeys.length > 0;
 
     if (isLoading) {
         return (
@@ -87,7 +88,7 @@ const VendorOnboardingPage = () => {
                     </h1>
                     <p className="text-lg text-muted-foreground mb-8">Agora vamos completar seu cadastro de vendedor.</p>
                 </div>
-                {vendor && <VendorDetailsForm vendor={vendor} onSuccess={() => setOnboardingComplete(true)} />}
+                {vendor && <VendorDetailsForm vendor={vendor} />}
             </main>
         </div>
     );

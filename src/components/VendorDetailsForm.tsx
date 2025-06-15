@@ -33,7 +33,7 @@ const formSchema = z.object({
 
 interface VendorDetailsFormProps {
     vendor: Vendor;
-    onSuccess: () => void;
+    onSuccess?: () => void;
 }
 
 const VendorDetailsForm = ({ vendor, onSuccess }: VendorDetailsFormProps) => {
@@ -74,7 +74,8 @@ const VendorDetailsForm = ({ vendor, onSuccess }: VendorDetailsFormProps) => {
         description: "Seus dados de vendedor foram salvos.",
       });
       queryClient.invalidateQueries({ queryKey: ['vendor', vendor.user_id] });
-      onSuccess();
+      queryClient.invalidateQueries({ queryKey: ['vendorPixKeys', vendor.id] });
+      onSuccess?.();
     } catch (error: any) {
       toast({
         title: "Erro ao salvar",
