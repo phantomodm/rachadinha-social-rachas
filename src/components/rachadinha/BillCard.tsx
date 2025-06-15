@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { FileText, CheckCircle, CreditCard, Copy } from 'lucide-react';
+import { FileText, CheckCircle, CreditCard, Copy, Share } from 'lucide-react';
 import { Participant } from '@/lib/api';
 import { formatCurrency } from '@/lib/formatters';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useToast } from '@/components/ui/use-toast';
 
 interface BillCardProps {
+  rachadinhaName: string;
   participants: Participant[];
   calculation: {
     participantBreakdowns: Record<string, {
@@ -68,6 +69,7 @@ const PixPaymentDialog = ({ participantName, amount }: { participantName: string
 }
 
 const BillCard = ({
+  rachadinhaName,
   participants,
   calculation,
   paidStatus,
@@ -76,6 +78,42 @@ const BillCard = ({
   setLocalServiceCharge,
   serviceCharge,
 }: BillCardProps) => {
+  const { toast } = useToast();
+
+  const handleShare = (participantName: string, breakdown: typeof calculation.participantBreakdowns[string]) => {
+    const summary = `Resumo da sua conta na rachadinha "${rachadinhaName}":
+
+- Itens individuais: ${formatCurrency(breakdown.individualItemsTotal)}
+- Rateio de itens compartilhados: ${formatCurrency(breakdown.sharedItemsShare)}
+- Subtotal: ${formatCurrency(breakdown.subtotal)}
+- Taxa de Serviço (${serviceCharge}%): ${formatCurrency(breakdown.serviceChargePortion)}
+- Taxa da Rachadinha: ${formatCurrency(breakdown.rachadinhaFee)}
+--------------------
+Total a pagar: ${formatCurrency(breakdown.total)}`.trim().replace(/^\s+/gm, '');
+
+    if (navigator.share) {
+      navigator.share({
+        title: `Sua conta da rachadinha "${rachadinhaName}"`,
+        text: summary,
+      }).catch((error) => {
+        console.log('Erro ao compartilhar', error);
+        if (error.name !== 'AbortError') {
+          navigator.clipboard.writeText(summary);
+          toast({
+            title: "Copiado!",
+            description: "O resumo da conta foi copiado para a área de transferência.",
+          });
+        }
+      });
+    } else {
+      navigator.clipboard.writeText(summary);
+      toast({
+        title: "Copiado!",
+        description: "O resumo da conta foi copiado para a área de transferência.",
+      });
+    }
+  };
+
   return (
     <Card>
       <CardHeader><CardTitle className="flex items-center gap-2"><FileText className="text-primary"/>A Conta Final</CardTitle></CardHeader>
@@ -108,6 +146,9 @@ const BillCard = ({
                                 <div className="flex justify-between"><span>Taxa da Rachadinha:</span> <span>{formatCurrency(breakdown.rachadinhaFee)}</span></div>
                             </div>
                             <div className="flex gap-2 justify-end">
+                                <Button variant="outline" size="sm" onClick={() => handleShare(p.name, breakdown)}>
+                                    <Share className="mr-2 h-4 w-4"/>Compartilhar
+                                </Button>
                                 <Dialog>
                                     <DialogTrigger asChild>
                                         <Button variant="outline" size="sm"><CreditCard className="mr-2 h-4 w-4"/>Pagar com Pix</Button>

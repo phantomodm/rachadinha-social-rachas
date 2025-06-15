@@ -94,6 +94,7 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
 
       {items.length > 0 && (
         <BillCard 
+          rachadinhaName={rachadinhaData.name}
           participants={participants}
           calculation={calculation}
           paidStatus={paidStatus}
