@@ -4,10 +4,20 @@ import { products } from '@/data/products';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ShoppingCart } from 'lucide-react';
+import { useCart } from '@/hooks/useCart';
+import { toast } from 'sonner';
 
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const product = products.find((p) => p.id === id);
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    if (product) {
+      addToCart(product.id, 1);
+      toast.success(`${product.name} adicionado ao carrinho!`);
+    }
+  };
 
   if (!product) {
     return (
@@ -46,7 +56,7 @@ const ProductDetailPage = () => {
               <p className="text-3xl font-bold">
                 {product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               </p>
-              <Button size="lg">
+              <Button size="lg" onClick={handleAddToCart}>
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Adicionar ao Carrinho
               </Button>

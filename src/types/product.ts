@@ -8,3 +8,7 @@ export interface Product {
   category: string;
   longDescription: string;
 }
+
+export interface CartItem extends Product {
+  quantity: number;
+}
