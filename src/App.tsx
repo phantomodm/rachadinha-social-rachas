@@ -12,6 +12,7 @@ import RachadinhaPage from "./pages/RachadinhaPage";
 import CreateRachadinhaPage from "./pages/CreateRachadinhaPage";
 import AddParticipantsPage from "./pages/AddParticipantsPage";
 import ContactsPage from "./pages/ContactsPage";
+import SupportPage from "./pages/SupportPage";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/create-rachadinha" element={<CreateRachadinhaPage />} />
             <Route path="/rachadinha/:id/add-participants" element={<AddParticipantsPage />} />
             <Route path="/contacts" element={<ContactsPage />} />
+            <Route path="/support" element={<SupportPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

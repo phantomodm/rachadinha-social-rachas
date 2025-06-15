@@ -114,8 +114,15 @@ const Index = () => {
 
       </main>
       <footer className="text-center py-6 border-t">
-        <p className="text-muted-foreground">Feito com ❤️ em Ilhéus, para o mundo.</p>
-        <p className="text-sm text-muted-foreground/80">Criado com Lovable.dev</p>
+        <div className="container mx-auto space-y-2">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-x-6 gap-y-2">
+                <p className="text-sm text-muted-foreground">Feito com ❤️ em Ilhéus, para o mundo.</p>
+                <Link to="/support" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                    Central de Ajuda
+                </Link>
+            </div>
+            <p className="text-sm text-muted-foreground/80">Criado com Lovable.dev</p>
+        </div>
       </footer>
     </div>
   );
