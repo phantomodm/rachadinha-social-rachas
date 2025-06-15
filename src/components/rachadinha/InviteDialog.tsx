@@ -10,7 +10,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Copy, Check } from 'lucide-react';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useToast } from '@/components/ui/use-toast';
 
 interface InviteDialogProps {
@@ -41,7 +41,7 @@ const InviteDialog = ({ rachadinhaId, open, onOpenChange }: InviteDialogProps) =
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col items-center justify-center gap-4 py-4">
-          <QRCode value={inviteLink} size={128} bgColor="hsl(var(--background))" fgColor="hsl(var(--foreground))" />
+          <QRCodeSVG value={inviteLink} size={128} bgColor="hsl(var(--background))" fgColor="hsl(var(--foreground))" />
           <div className="flex w-full items-center space-x-2">
             <Input id="link" defaultValue={inviteLink} readOnly />
             <Button type="button" size="icon" onClick={copyToClipboard}>
