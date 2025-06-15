@@ -92,7 +92,8 @@ const useRachadinha = (rachadinhaId: string) => {
   const calculation = useMemo(() => {
     if (!rachadinhaData) return { participantBreakdowns: {}, participantTotals: {}, totalBill: 0, totalServiceCharge: 0, totalWithoutService: 0, totalRachadinhaFee: 0 };
     
-    const { participants, items, service_charge, rachadinha_fee } = rachadinhaData;
+    const { participants, items, service_charge } = rachadinhaData;
+    const rachadinha_fee = 1; // Using a default fee of 1. We can make this dynamic later.
 
     const participantBreakdowns: Record<string, {
         individualItemsTotal: number;

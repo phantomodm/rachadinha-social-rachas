@@ -39,7 +39,6 @@ export const getRachadinhaData = async (rachadinhaId: string): Promise<Rachadinh
             vendors (*)
         `)
         .eq('id', rachadinhaId)
-        .order('created_at', { foreignTable: 'items', ascending: true })
         .order('name', { foreignTable: 'participants', ascending: true })
         .single();
 
