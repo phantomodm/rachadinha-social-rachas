@@ -5,16 +5,18 @@ import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { UserPlus, Users, ArrowRight, Link as LinkIcon, Trash2 } from 'lucide-react';
+import { UserPlus, Users, ArrowRight, Link as LinkIcon, Trash2, BookUser } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import useRachadinha from '@/hooks/useRachadinha';
 import { Skeleton } from '@/components/ui/skeleton';
 import InviteDialog from '@/components/rachadinha/InviteDialog';
+import AddFromContactsDialog from '@/components/rachadinha/AddFromContactsDialog';
 
 const AddParticipantsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isInviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const [isContactsDialogOpen, setContactsDialogOpen] = useState(false);
 
   const {
     rachadinhaData,
@@ -24,6 +26,7 @@ const AddParticipantsPage = () => {
     handleAddParticipant,
     addParticipantMutation,
     removeParticipantMutation,
+    bulkAddParticipantsMutation,
   } = useRachadinha(id!);
 
   if (isLoadingRachadinha) {
@@ -52,6 +55,14 @@ const AddParticipantsPage = () => {
   }
 
   const { participants } = rachadinhaData;
+
+  const handleAddFromContacts = (names: string[]) => {
+    bulkAddParticipantsMutation.mutate(names, {
+      onSuccess: () => {
+        setContactsDialogOpen(false);
+      },
+    });
+  };
 
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -123,6 +134,20 @@ const AddParticipantsPage = () => {
                   <span className="bg-card px-2 text-muted-foreground">Ou</span>
                 </div>
               </div>
+
+              <Button variant="outline" className="w-full" onClick={() => setContactsDialogOpen(true)}>
+                <BookUser className="mr-2 h-4 w-4" />
+                Adicionar dos Meus Contatos
+              </Button>
+              
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                  <div className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">Ou</span>
+                </div>
+              </div>
               
               <Button variant="outline" className="w-full" onClick={() => setInviteDialogOpen(true)}>
                 <LinkIcon className="mr-2 h-4 w-4" />
@@ -141,6 +166,15 @@ const AddParticipantsPage = () => {
         </div>
       </main>
       {id && <InviteDialog rachadinhaId={id} open={isInviteDialogOpen} onOpenChange={setInviteDialogOpen} />}
+      {rachadinhaData && (
+        <AddFromContactsDialog 
+          open={isContactsDialogOpen}
+          onOpenChange={setContactsDialogOpen}
+          existingParticipants={participants}
+          onAddParticipants={handleAddFromContacts}
+          isAdding={bulkAddParticipantsMutation.isPending}
+        />
+      )}
     </div>
   );
 };

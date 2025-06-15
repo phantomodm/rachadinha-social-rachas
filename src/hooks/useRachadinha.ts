@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
@@ -12,6 +11,7 @@ import {
   removeItem,
   toggleItemParticipant,
   getAppSettings,
+  bulkAddParticipants,
 } from '@/lib/api';
 
 const useRachadinha = (rachadinhaId: string) => {
@@ -133,6 +133,7 @@ const useRachadinha = (rachadinhaId: string) => {
   });
 
   const addParticipantMutation = createMutation((name: string) => addParticipant(rachadinhaId, name), 'adicionar participante');
+  const bulkAddParticipantsMutation = createMutation((names: string[]) => bulkAddParticipants(rachadinhaId, names), 'adicionar participantes');
   const removeParticipantMutation = createMutation(removeParticipant, 'remover participante');
   const addItemMutation = createMutation((vars: { name: string, price: number, participantIds: string[] }) => addItem(rachadinhaId, vars.name, vars.price, vars.participantIds), 'adicionar item');
   const removeItemMutation = createMutation(removeItem, 'remover item');
@@ -249,6 +250,7 @@ const useRachadinha = (rachadinhaId: string) => {
     togglePaidStatus,
     calculation,
     addParticipantMutation,
+    bulkAddParticipantsMutation,
     removeParticipantMutation,
     addItemMutation,
     removeItemMutation,
