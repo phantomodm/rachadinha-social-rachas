@@ -8,6 +8,7 @@ import ParticipantsCard from './rachadinha/ParticipantsCard';
 import ItemsCard from './rachadinha/ItemsCard';
 import BillCard from './rachadinha/BillCard';
 import RachadinhaHeader from './rachadinha/RachadinhaHeader';
+import OnboardingGuide from './rachadinha/OnboardingGuide';
 
 interface RachadinhaCalculatorProps {
   rachadinhaId: string;
@@ -58,12 +59,15 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
   }
 
   const { participants, items, service_charge } = rachadinhaData;
+  const isNewRachadinha = participants.length === 0 && items.length === 0 && !isGuest;
 
   return (
     <div className="space-y-8 animate-fade-in">
       <Button variant="ghost" onClick={onBack} className="mb-4"><ArrowLeft className="mr-2 h-4 w-4" />Voltar para minhas rachadinhas</Button>
       
       <RachadinhaHeader rachadinhaData={rachadinhaData} totalBill={calculation.totalBill} />
+
+      {isNewRachadinha && <OnboardingGuide />}
 
       <ParticipantsCard 
         rachadinhaData={rachadinhaData}

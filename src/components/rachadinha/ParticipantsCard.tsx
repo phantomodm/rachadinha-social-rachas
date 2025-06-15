@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -71,9 +70,6 @@ const ParticipantsCard = ({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><Users className="text-primary"/>Galera da Rachadinha</CardTitle>
-          {participants.length === 0 && (
-            <CardDescription>Adicione os participantes para começar a dividir a conta.</CardDescription>
-          )}
         </CardHeader>
         <CardContent className="space-y-6">
           <ParticipantList participants={participants} removeParticipantMutation={removeParticipantMutation} />
