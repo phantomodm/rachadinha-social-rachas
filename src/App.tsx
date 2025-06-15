@@ -15,6 +15,7 @@ import ContactsPage from "./pages/ContactsPage";
 import SupportPage from "./pages/SupportPage";
 import StorePage from "./pages/StorePage";
 import MainLayout from "./layouts/MainLayout";
+import ProductDetailPage from "./pages/ProductDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/store" element={<StorePage />} />
             </Route>
 
+            <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="/auth" element={<AuthPage />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
