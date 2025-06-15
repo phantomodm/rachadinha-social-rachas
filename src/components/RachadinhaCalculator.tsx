@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -36,6 +37,7 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
     toggleItemParticipantMutation,
     handleAddParticipant,
     handleAddItem,
+    isGuest,
   } = useRachadinha(rachadinhaId);
 
 
@@ -69,6 +71,7 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
         addParticipantMutation={addParticipantMutation}
         removeParticipantMutation={removeParticipantMutation}
         bulkAddParticipantsMutation={bulkAddParticipantsMutation}
+        isGuest={isGuest}
       />
       
       {participants.length > 0 && (

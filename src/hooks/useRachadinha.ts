@@ -1,14 +1,17 @@
-
 import { useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useRachadinhaData } from './useRachadinhaData';
 import { useRachadinhaMutations } from './useRachadinhaMutations';
 import { useRachadinhaCalculation } from './useRachadinhaCalculation';
 import { useRachadinhaState } from './useRachadinhaState';
+import { useGuest } from './useGuest';
+import { useToast } from '@/components/ui/use-toast';
 
 const useRachadinha = (rachadinhaId: string) => {
-  // 1. Data fetching
+  const { toast } = useToast();
+  // 1. Data fetching & Guest Session
   const { rachadinhaData, appSettings, isLoading } = useRachadinhaData(rachadinhaId);
+  const { guestSession, isGuest } = useGuest(rachadinhaId);
 
   // 2. Local State Management
   const {
@@ -21,15 +24,7 @@ const useRachadinha = (rachadinhaId: string) => {
   } = useRachadinhaState(rachadinhaData);
 
   // 3. Mutations
-  const {
-    serviceChargeMutation,
-    addParticipantMutation,
-    bulkAddParticipantsMutation,
-    removeParticipantMutation,
-    addItemMutation,
-    removeItemMutation,
-    toggleItemParticipantMutation,
-  } = useRachadinhaMutations(rachadinhaId);
+  const mutations = useRachadinhaMutations(rachadinhaId);
 
   // 4. Calculations
   const calculation = useRachadinhaCalculation(rachadinhaData, appSettings);
@@ -39,24 +34,61 @@ const useRachadinha = (rachadinhaId: string) => {
 
   useEffect(() => {
     if (rachadinhaData && debouncedServiceCharge !== rachadinhaData.service_charge) {
-        serviceChargeMutation.mutate(debouncedServiceCharge);
+        mutations.serviceChargeMutation.mutate(debouncedServiceCharge);
     }
-  }, [debouncedServiceCharge, rachadinhaData, serviceChargeMutation]);
+  }, [debouncedServiceCharge, rachadinhaData, mutations.serviceChargeMutation]);
 
   // 6. Event Handlers
   const handleAddParticipant = () => {
+    if (isGuest) return;
     if (newParticipantName.trim()) {
-      addParticipantMutation.mutate(newParticipantName.trim());
+      mutations.addParticipantMutation.mutate(newParticipantName.trim());
       setNewParticipantName('');
     }
   };
 
   const handleAddItem = () => {
     if (newItemName.trim() && parseFloat(newItemPrice) > 0 && rachadinhaData?.participants.length) {
-      const allParticipantIds = rachadinhaData.participants.map(p => p.id);
-      addItemMutation.mutate({ name: newItemName.trim(), price: parseFloat(newItemPrice), participantIds: allParticipantIds });
+      const participantIds = isGuest
+        ? [guestSession!.participantId]
+        : rachadinhaData.participants.map(p => p.id);
+      
+      mutations.addItemMutation.mutate({ name: newItemName.trim(), price: parseFloat(newItemPrice), participantIds });
       setNewItemName('');
       setNewItemPrice('');
+    }
+  };
+  
+  // Wrap mutations to add guest restrictions
+  const wrapMutation = (mutation: any, allowed: boolean, message: string) => ({
+    ...mutation,
+    mutate: (...args: any) => {
+      if (!allowed) {
+        toast({ title: "Ação não permitida", description: message, variant: "destructive" });
+        return;
+      }
+      return mutation.mutate(...args);
+    },
+    mutateAsync: async (...args: any) => {
+      if (!allowed) {
+        toast({ title: "Ação não permitida", description: message, variant: "destructive" });
+        return;
+      }
+      return mutation.mutateAsync(...args);
+    }
+  });
+
+  const removeParticipantMutation = wrapMutation(mutations.removeParticipantMutation, !isGuest, 'Convidados não podem remover participantes.');
+  const removeItemMutation = wrapMutation(mutations.removeItemMutation, !isGuest, 'Convidados não podem remover itens.');
+
+  const toggleItemParticipantMutation = {
+    ...mutations.toggleItemParticipantMutation,
+    mutate: (variables: { itemId: string, participantId: string, isMember: boolean }) => {
+        if (isGuest && variables.participantId !== guestSession?.participantId) {
+            toast({ title: "Ação não permitida", description: 'Você só pode alterar sua própria participação nos itens.', variant: "destructive" });
+            return;
+        }
+        mutations.toggleItemParticipantMutation.mutate(variables);
     }
   };
 
@@ -74,14 +106,15 @@ const useRachadinha = (rachadinhaId: string) => {
     paidStatus,
     togglePaidStatus,
     calculation,
-    addParticipantMutation,
-    bulkAddParticipantsMutation,
+    addParticipantMutation: mutations.addParticipantMutation,
+    bulkAddParticipantsMutation: wrapMutation(mutations.bulkAddParticipantsMutation, !isGuest, 'Convidados não podem adicionar contatos.'),
     removeParticipantMutation,
-    addItemMutation,
+    addItemMutation: mutations.addItemMutation,
     removeItemMutation,
     toggleItemParticipantMutation,
     handleAddParticipant,
     handleAddItem,
+    isGuest,
   };
 };
 
