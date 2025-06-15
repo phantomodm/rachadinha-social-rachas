@@ -11,7 +11,7 @@ const CreateRachadinhaPage = () => {
     const navigate = useNavigate();
 
     const handleRachadinhaCreated = (rachadinhaId: string) => {
-        navigate(`/rachadinha/${rachadinhaId}`);
+        navigate(`/rachadinha/${rachadinhaId}/add-participants`);
     };
 
     return (
