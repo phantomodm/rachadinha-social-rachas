@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import CreateRachadinhaForm from '@/components/CreateRachadinhaForm';
@@ -11,7 +10,7 @@ const CreateRachadinhaPage = () => {
     const navigate = useNavigate();
 
     const handleRachadinhaCreated = (rachadinhaId: string) => {
-        navigate(`/rachadinha/${rachadinhaId}/add-participants`);
+        navigate(`/rachadinha/${rachadinhaId}`);
     };
 
     return (

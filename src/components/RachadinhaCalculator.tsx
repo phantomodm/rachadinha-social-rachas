@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -30,6 +29,7 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
     togglePaidStatus,
     calculation,
     addParticipantMutation,
+    bulkAddParticipantsMutation,
     removeParticipantMutation,
     addItemMutation,
     removeItemMutation,
@@ -62,12 +62,13 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
       <RachadinhaHeader rachadinhaData={rachadinhaData} totalBill={calculation.totalBill} />
 
       <ParticipantsCard 
-        participants={participants}
+        rachadinhaData={rachadinhaData}
         newParticipantName={newParticipantName}
         setNewParticipantName={setNewParticipantName}
         handleAddParticipant={handleAddParticipant}
         addParticipantMutation={addParticipantMutation}
         removeParticipantMutation={removeParticipantMutation}
+        bulkAddParticipantsMutation={bulkAddParticipantsMutation}
       />
       
       {participants.length > 0 && (

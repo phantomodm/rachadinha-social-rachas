@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,7 +10,7 @@ import { CartProvider } from "./contexts/CartContext";
 import AuthPage from "./pages/Auth";
 import RachadinhaPage from "./pages/RachadinhaPage";
 import CreateRachadinhaPage from "./pages/CreateRachadinhaPage";
-import AddParticipantsPage from "./pages/AddParticipantsPage";
+// import AddParticipantsPage from "./pages/AddParticipantsPage"; // This is now removed
 import ContactsPage from "./pages/ContactsPage";
 import SupportPage from "./pages/SupportPage";
 import StorePage from "./pages/StorePage";
@@ -38,7 +37,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/rachadinha/:id" element={<RachadinhaPage />} />
                 <Route path="/create-rachadinha" element={<CreateRachadinhaPage />} />
-                <Route path="/rachadinha/:id/add-participants" element={<AddParticipantsPage />} />
+                {/* <Route path="/rachadinha/:id/add-participants" element={<AddParticipantsPage />} /> */}
                 <Route path="/contacts" element={<ContactsPage />} />
                 <Route path="/support" element={<SupportPage />} />
                 <Route path="/store" element={<StorePage />} />
