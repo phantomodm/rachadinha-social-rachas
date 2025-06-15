@@ -43,8 +43,11 @@ const RachadinhaPage = () => {
                     </div>
                 ) : (
                     <>
-                        {rachadinhaData?.vendor_id && !rachadinhaData.table_number && id && (
-                            <TableNumberInput rachadinhaId={id} />
+                        {rachadinhaData && !rachadinhaData.table_number && id && (
+                            <TableNumberInput
+                                rachadinhaId={id}
+                                isPartner={!!rachadinhaData.vendor_id}
+                            />
                         )}
                         <RachadinhaCalculator rachadinhaId={id} onBack={handleBack} />
                     </>

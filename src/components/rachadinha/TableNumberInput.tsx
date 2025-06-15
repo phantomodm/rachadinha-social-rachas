@@ -10,6 +10,7 @@ import { useToast } from '@/components/ui/use-toast';
 
 interface TableNumberInputProps {
     rachadinhaId: string;
+    isPartner: boolean;
 }
 
 const updateTableNumber = async ({ rachadinhaId, tableNumber }: { rachadinhaId: string, tableNumber: string }) => {
@@ -24,7 +25,7 @@ const updateTableNumber = async ({ rachadinhaId, tableNumber }: { rachadinhaId: 
     return data;
 };
 
-const TableNumberInput = ({ rachadinhaId }: TableNumberInputProps) => {
+const TableNumberInput = ({ rachadinhaId, isPartner }: TableNumberInputProps) => {
     const [tableNumber, setTableNumber] = useState('');
     const queryClient = useQueryClient();
     const { toast } = useToast();
@@ -50,10 +51,21 @@ const TableNumberInput = ({ rachadinhaId }: TableNumberInputProps) => {
     return (
         <Card className="my-6 animate-fade-in">
             <CardHeader>
-                <CardTitle>Restaurante Parceiro Detectado!</CardTitle>
-                <CardDescription>
-                    Este estabelecimento usa o Rachadinha para fechar a conta. Informe o número da sua mesa para agilizar o processo.
-                </CardDescription>
+                {isPartner ? (
+                    <>
+                        <CardTitle>Restaurante Parceiro Detectado!</CardTitle>
+                        <CardDescription>
+                            Este estabelecimento usa o Rachadinha para fechar a conta. Informe o número da sua mesa para agilizar o processo.
+                        </CardDescription>
+                    </>
+                ) : (
+                    <>
+                        <CardTitle>Adicionar número da mesa</CardTitle>
+                        <CardDescription>
+                            Informe o número da sua mesa para referência.
+                        </CardDescription>
+                    </>
+                )}
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit} className="flex gap-2">
