@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -6,6 +7,7 @@ import useRachadinha from '@/hooks/useRachadinha';
 import ParticipantsCard from './rachadinha/ParticipantsCard';
 import ItemsCard from './rachadinha/ItemsCard';
 import BillCard from './rachadinha/BillCard';
+import RachadinhaHeader from './rachadinha/RachadinhaHeader';
 
 interface RachadinhaCalculatorProps {
   rachadinhaId: string;
@@ -57,6 +59,8 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
     <div className="space-y-8 animate-fade-in">
       <Button variant="ghost" onClick={onBack} className="mb-4"><ArrowLeft className="mr-2 h-4 w-4" />Voltar para minhas rachadinhas</Button>
       
+      <RachadinhaHeader rachadinhaData={rachadinhaData} totalBill={calculation.totalBill} />
+
       <ParticipantsCard 
         participants={participants}
         newParticipantName={newParticipantName}
