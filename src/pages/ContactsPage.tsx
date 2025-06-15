@@ -1,20 +1,26 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
-import { getContacts, addContact, removeContact, Contact } from '@/lib/api';
+import { getContacts, addContact, removeContact, Contact, bulkAddContacts } from '@/lib/api';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { UserPlus, Trash2, Users, Loader2 } from 'lucide-react';
+import { UserPlus, Trash2, Users, Loader2, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
+import { Contacts as CapacitorContacts } from '@capacitor-community/contacts';
 
 const ContactsPage = () => {
   const { session, loading: authLoading } = useAuth();
   const queryClient = useQueryClient();
   const [newContactName, setNewContactName] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(Capacitor.isNativePlatform());
+  }, []);
 
   const { data: contacts, isLoading: isLoadingContacts } = useQuery({
     queryKey: ['contacts', session?.user?.id],
@@ -49,9 +55,55 @@ const ContactsPage = () => {
     },
   });
 
+  const bulkAddContactsMutation = useMutation({
+    mutationFn: (names: string[]) => bulkAddContacts(session!.user.id, names),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['contacts', session?.user?.id] });
+      if (data && data.length > 0) {
+        toast.success(`${data.length} contato(s) importado(s) com sucesso!`);
+      } else {
+        toast.info("Nenhum contato novo foi importado. Eles podem já existir na sua lista.");
+      }
+    },
+    onError: (error: any) => {
+      toast.error('Erro ao importar contatos.', { description: error.message });
+    },
+  });
+
   const handleAddContact = () => {
     if (newContactName.trim()) {
       addContactMutation.mutate(newContactName.trim());
+    }
+  };
+
+  const handleImportContacts = async () => {
+    try {
+      // The plugin should handle requesting permission if not already granted.
+      const result = await CapacitorContacts.getContacts({
+        projection: {
+          name: true,
+        },
+      });
+
+      const contactNames = result.contacts
+        .map(c => c.name?.display)
+        .filter((name): name is string => !!name && name.trim().length > 0);
+
+      if (contactNames.length > 0) {
+        bulkAddContactsMutation.mutate(contactNames);
+      } else {
+        toast.info("Nenhum contato com nome foi encontrado no seu celular.");
+      }
+    } catch (e) {
+      console.error(e);
+      // Capacitor availability check for web
+      if (e instanceof Error && e.message.includes("is not implemented on web")) {
+          toast.error("Esta funcionalidade está disponível apenas no aplicativo móvel.");
+      } else {
+          toast.error("Ocorreu um erro ao importar contatos.", {
+              description: "Verifique as permissões do aplicativo e tente novamente.",
+          });
+      }
     }
   };
 
@@ -110,6 +162,19 @@ const ContactsPage = () => {
                   Adicionar
                 </Button>
               </div>
+
+              {isMobile && (
+                <div className="mb-6">
+                  <Button variant="outline" className="w-full" onClick={handleImportContacts} disabled={bulkAddContactsMutation.isPending}>
+                      {bulkAddContactsMutation.isPending ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                          <Phone className="mr-2 h-4 w-4" />
+                      )}
+                      Importar Contatos do Celular
+                  </Button>
+                </div>
+              )}
 
               {isLoadingContacts ? (
                 <div className="text-center p-4">Carregando contatos...</div>

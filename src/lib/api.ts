@@ -215,3 +215,15 @@ export const removeContact = async (contactId: string) => {
         .eq('id', contactId);
     if (error) throw error;
 };
+
+export const bulkAddContacts = async (userId: string, names: string[]) => {
+    const contactsToAdd = names.map(name => ({ user_id: userId, name }));
+    
+    const { data, error } = await supabase
+        .from('contacts')
+        .upsert(contactsToAdd, { onConflict: 'user_id, name', ignoreDuplicates: true })
+        .select();
+
+    if (error) throw error;
+    return data;
+};
