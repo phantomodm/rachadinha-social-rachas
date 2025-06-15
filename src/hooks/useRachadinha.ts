@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 import { useRachadinhaData } from './useRachadinhaData';
@@ -11,7 +12,7 @@ const useRachadinha = (rachadinhaId: string) => {
   const { toast } = useToast();
   // 1. Data fetching & Guest Session
   const { rachadinhaData, appSettings, isLoading } = useRachadinhaData(rachadinhaId);
-  const { guestSession, isGuest } = useGuest(rachadinhaId);
+  const { guestSession, isGuest, logoutGuest } = useGuest(rachadinhaId);
 
   // 2. Local State Management
   const {
@@ -59,6 +60,11 @@ const useRachadinha = (rachadinhaId: string) => {
     }
   };
   
+  const handleLogoutGuest = () => {
+    logoutGuest(rachadinhaId);
+    toast({ title: "Você saiu da rachadinha.", description: "Você não está mais participando como convidado." });
+  };
+
   // Wrap mutations to add guest restrictions
   const wrapMutation = (mutation: any, allowed: boolean, message: string) => ({
     ...mutation,
@@ -115,6 +121,8 @@ const useRachadinha = (rachadinhaId: string) => {
     handleAddParticipant,
     handleAddItem,
     isGuest,
+    guestSession,
+    handleLogoutGuest,
   };
 };
 

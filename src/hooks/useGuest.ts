@@ -2,7 +2,7 @@
 import { useLocalStorage } from './useLocalStorage';
 import { Participant } from '@/lib/api';
 
-interface GuestSession {
+export interface GuestSession {
   participantId: string;
   rachadinhaId: string;
   name: string;

@@ -38,6 +38,8 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
     handleAddParticipant,
     handleAddItem,
     isGuest,
+    guestSession,
+    handleLogoutGuest,
   } = useRachadinha(rachadinhaId);
 
 
@@ -72,6 +74,8 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
         removeParticipantMutation={removeParticipantMutation}
         bulkAddParticipantsMutation={bulkAddParticipantsMutation}
         isGuest={isGuest}
+        guestSession={guestSession}
+        handleLogoutGuest={handleLogoutGuest}
       />
       
       {participants.length > 0 && (

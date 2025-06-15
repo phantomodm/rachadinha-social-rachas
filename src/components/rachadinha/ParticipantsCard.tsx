@@ -10,6 +10,7 @@ import ParticipantList from '../add-participants/ParticipantList';
 import InvitationOptions from '../add-participants/InvitationOptions';
 import InviteDialog from './InviteDialog';
 import AddFromContactsDialog from './AddFromContactsDialog';
+import { GuestSession } from '@/hooks/useGuest';
 
 interface ParticipantsCardProps {
   rachadinhaData: RachadinhaData;
@@ -20,6 +21,8 @@ interface ParticipantsCardProps {
   removeParticipantMutation: UseMutationResult<unknown, Error, string, unknown>;
   bulkAddParticipantsMutation: UseMutationResult<unknown, Error, string[], unknown>;
   isGuest: boolean;
+  guestSession?: GuestSession;
+  handleLogoutGuest?: () => void;
 }
 
 const ParticipantsCard = ({
@@ -31,6 +34,8 @@ const ParticipantsCard = ({
   removeParticipantMutation,
   bulkAddParticipantsMutation,
   isGuest,
+  guestSession,
+  handleLogoutGuest,
 }: ParticipantsCardProps) => {
   const [isInviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [isContactsDialogOpen, setContactsDialogOpen] = useState(false);
@@ -72,6 +77,21 @@ const ParticipantsCard = ({
         </CardHeader>
         <CardContent className="space-y-6">
           <ParticipantList participants={participants} removeParticipantMutation={removeParticipantMutation} />
+
+          {isGuest && guestSession && handleLogoutGuest && (
+            <div className="p-3 bg-muted/50 rounded-lg text-center">
+                <p className="text-sm text-muted-foreground">
+                    Participando como convidado: <strong>{guestSession.name}</strong>
+                </p>
+                <Button
+                    variant="link"
+                    className="text-primary h-auto p-0 text-sm"
+                    onClick={handleLogoutGuest}
+                >
+                    Sair da rachadinha
+                </Button>
+            </div>
+          )}
 
           {!isGuest && (
             <>
