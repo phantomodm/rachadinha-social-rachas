@@ -6,6 +6,7 @@ export type Participant = Database['public']['Tables']['participants']['Row'];
 export type Item = Database['public']['Tables']['items']['Row'];
 export type ItemParticipant = Database['public']['Tables']['item_participants']['Row'];
 export type Vendor = Database['public']['Tables']['vendors']['Row'];
+export type VendorPixKey = Database['public']['Tables']['vendor_pix_keys']['Row'];
 export type AppSettings = {
     [key: string]: any;
 };
