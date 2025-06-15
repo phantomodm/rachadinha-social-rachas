@@ -68,7 +68,9 @@ const CartPage = () => {
                     <span>Total</span>
                     <span>{totalPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
                   </div>
-                  <Button size="lg" className="w-full mt-6">Finalizar Compra</Button>
+                  <Button asChild size="lg" className="w-full mt-6">
+                    <Link to="/checkout">Finalizar Compra</Link>
+                  </Button>
                 </CardContent>
               </Card>
             </div>
