@@ -121,7 +121,9 @@ export type Database = {
           name: string
           service_charge: number
           status: string
+          table_number: string | null
           user_id: string
+          vendor_id: string | null
         }
         Insert: {
           created_at?: string
@@ -131,7 +133,9 @@ export type Database = {
           name: string
           service_charge?: number
           status?: string
+          table_number?: string | null
           user_id: string
+          vendor_id?: string | null
         }
         Update: {
           created_at?: string
@@ -141,7 +145,41 @@ export type Database = {
           name?: string
           service_charge?: number
           status?: string
+          table_number?: string | null
           user_id?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rachadinhas_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendors: {
+        Row: {
+          created_at: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
         }
         Relationships: []
       }

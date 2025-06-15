@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
 
@@ -57,13 +58,24 @@ export const getRachadinhaData = async (rachadinhaId: string): Promise<Rachadinh
 
 export const createRachadinha = async (payload: { userId: string, name: string, latitude?: number, longitude?: number }) => {
     const { userId, name, latitude, longitude } = payload;
+    
+    // Check if a vendor with this name exists
+    const { data: vendor, error: vendorError } = await supabase
+        .from('vendors')
+        .select('id')
+        .ilike('name', name)
+        .maybeSingle();
+
+    if (vendorError) throw vendorError;
+
     const { data, error } = await supabase
         .from('rachadinhas')
         .insert({
             user_id: userId,
             name: name || 'Nova Rachadinha',
             latitude,
-            longitude
+            longitude,
+            vendor_id: vendor?.id || null,
         })
         .select()
         .single();

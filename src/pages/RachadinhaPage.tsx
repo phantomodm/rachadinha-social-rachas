@@ -3,10 +3,20 @@ import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import RachadinhaCalculator from '@/components/RachadinhaCalculator';
 import Header from '@/components/Header';
+import { useQuery } from '@tanstack/react-query';
+import { getRachadinhaData } from '@/lib/api';
+import { Skeleton } from '@/components/ui/skeleton';
+import TableNumberInput from '@/components/rachadinha/TableNumberInput';
 
 const RachadinhaPage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+
+    const { data: rachadinhaData, isLoading } = useQuery({
+        queryKey: ['rachadinha', id],
+        queryFn: () => getRachadinhaData(id!),
+        enabled: !!id,
+    });
 
     if (!id) {
         return (
@@ -25,7 +35,20 @@ const RachadinhaPage = () => {
         <div className="min-h-screen bg-background text-foreground">
             <Header />
             <main className="container mx-auto px-4 py-8">
-                <RachadinhaCalculator rachadinhaId={id} onBack={handleBack} />
+                {isLoading ? (
+                     <div className="space-y-6">
+                        <Skeleton className="h-32 w-full rounded-lg" />
+                        <Skeleton className="h-16 w-full rounded-lg" />
+                        <Skeleton className="h-64 w-full rounded-lg" />
+                    </div>
+                ) : (
+                    <>
+                        {rachadinhaData?.vendor_id && !rachadinhaData.table_number && id && (
+                            <TableNumberInput rachadinhaId={id} />
+                        )}
+                        <RachadinhaCalculator rachadinhaId={id} onBack={handleBack} />
+                    </>
+                )}
             </main>
         </div>
     );
