@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -8,6 +7,7 @@ import CheckoutForm from '@/components/CheckoutForm';
 import Header from '@/components/Header';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const stripePromise = loadStripe("pk_test_YOUR_PUBLISHABLE_KEY"); // IMPORTANT: Replace with your Stripe publishable key
 
