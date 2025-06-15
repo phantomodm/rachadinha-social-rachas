@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
@@ -11,6 +10,7 @@ import {
   addItem,
   removeItem,
   toggleItemParticipant,
+  getAppSettings,
 } from '@/lib/api';
 
 const useRachadinha = (rachadinhaId: string) => {
@@ -21,6 +21,11 @@ const useRachadinha = (rachadinhaId: string) => {
     queryKey: ['rachadinha', rachadinhaId],
     queryFn: () => getRachadinhaData(rachadinhaId),
     enabled: !!rachadinhaId,
+  });
+
+  const { data: appSettings, isLoading: isLoadingAppSettings } = useQuery({
+    queryKey: ['appSettings'],
+    queryFn: getAppSettings,
   });
 
   const [newParticipantName, setNewParticipantName] = useState('');
@@ -90,10 +95,10 @@ const useRachadinha = (rachadinhaId: string) => {
   };
 
   const calculation = useMemo(() => {
-    if (!rachadinhaData) return { participantBreakdowns: {}, participantTotals: {}, totalBill: 0, totalServiceCharge: 0, totalWithoutService: 0, totalRachadinhaFee: 0 };
+    if (!rachadinhaData || !appSettings) return { participantBreakdowns: {}, participantTotals: {}, totalBill: 0, totalServiceCharge: 0, totalWithoutService: 0, totalRachadinhaFee: 0 };
     
     const { participants, items, service_charge } = rachadinhaData;
-    const rachadinha_fee = 1; // Using a default fee of 1. We can make this dynamic later.
+    const rachadinha_fee = Number(appSettings?.rachadinha_fee || 1);
 
     const participantBreakdowns: Record<string, {
         individualItemsTotal: number;
@@ -163,11 +168,11 @@ const useRachadinha = (rachadinhaId: string) => {
     });
 
     return { participantTotals, participantBreakdowns, totalBill, totalServiceCharge, totalWithoutService: totalConsumed, totalRachadinhaFee };
-  }, [rachadinhaData]);
+  }, [rachadinhaData, appSettings]);
 
   return {
     rachadinhaData,
-    isLoadingRachadinha,
+    isLoadingRachadinha: isLoadingRachadinha || isLoadingAppSettings,
     newParticipantName,
     setNewParticipantName,
     newItemName,

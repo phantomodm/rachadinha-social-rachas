@@ -6,6 +6,9 @@ export type Participant = Database['public']['Tables']['participants']['Row'];
 export type Item = Database['public']['Tables']['items']['Row'];
 export type ItemParticipant = Database['public']['Tables']['item_participants']['Row'];
 export type Vendor = Database['public']['Tables']['vendors']['Row'];
+export type AppSettings = {
+    [key: string]: any;
+};
 
 export type ItemWithParticipants = Item & {
     item_participants: { participant_id: string }[]
@@ -23,6 +26,16 @@ export const getRachadinhas = async (userId: string) => {
         .from('rachadinhas')
         .select('id, name, created_at, status')
         .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data;
+};
+
+export const getAllRachadinhas = async () => {
+    const { data, error } = await supabase
+        .from('rachadinhas')
+        .select('id, name, created_at, status, user_id')
         .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -182,6 +195,46 @@ export const getUserProfile = async (userId: string) => {
     }
     return data;
 };
+
+export const getUserRoles = async (userId: string): Promise<string[]> => {
+    const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId);
+
+    if (error) {
+        console.error("Error fetching user roles:", error);
+        return [];
+    }
+    return data.map((r: { role: string }) => r.role);
+};
+
+export const getAppSettings = async (): Promise<AppSettings> => {
+    const { data, error } = await supabase
+        .from('app_settings')
+        .select('key, value');
+
+    if (error) throw error;
+    
+    const settings = data.reduce((acc, { key, value }) => {
+        acc[key] = value;
+        return acc;
+    }, {} as AppSettings);
+    
+    return settings;
+};
+
+export const updateAppSetting = async (key: string, value: any) => {
+    const { data, error } = await supabase
+        .from('app_settings')
+        .update({ value: value })
+        .eq('key', key)
+        .select()
+        .single();
+    if (error) throw error;
+    return data;
+};
+
 
 export type Contact = Database['public']['Tables']['contacts']['Row'];
 

@@ -7,9 +7,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import RachadinhaNotifier from '@/components/RachadinhaNotifier';
+import AdminDashboard from '@/components/AdminDashboard';
 
 const Index = () => {
-  const { session, loading } = useAuth();
+  const { session, loading, isAdmin } = useAuth();
 
   const scrollToCalculator = () => {
     document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
@@ -20,6 +21,13 @@ const Index = () => {
       <Header />
       {session && <RachadinhaNotifier />}
       <main className="container mx-auto px-4 py-8 md:py-16">
+        
+        {isAdmin && (
+            <section className="mb-16">
+                <AdminDashboard />
+            </section>
+        )}
+
         {/* Hero Section */}
         <section className="text-center py-16 md:py-24 animate-fade-in">
           <h1 className="text-4xl md:text-6xl font-extrabold text-primary mb-4">
