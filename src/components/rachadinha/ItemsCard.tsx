@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { ItemWithParticipants, Participant } from '@/lib/api';
 import { UseMutationResult } from '@tanstack/react-query';
+import { toast } from "sonner";
 
 interface ItemsCardProps {
   items: ItemWithParticipants[];
@@ -16,7 +17,6 @@ interface ItemsCardProps {
   setNewItemName: (name: string) => void;
   newItemPrice: string;
   setNewItemPrice: (price: string) => void;
-  handleAddItem: () => void;
   toggleItemParticipantMutation: UseMutationResult<unknown, Error, { itemId: string; participantId: string; isMember: boolean; }, unknown>;
   addItemMutation: UseMutationResult<unknown, Error, { name: string; price: number; participantIds: string[]; }, unknown>;
   removeItemMutation: UseMutationResult<unknown, Error, string, unknown>;
@@ -29,23 +29,79 @@ const ItemsCard = ({
   setNewItemName,
   newItemPrice,
   setNewItemPrice,
-  handleAddItem,
   toggleItemParticipantMutation,
   addItemMutation,
   removeItemMutation,
 }: ItemsCardProps) => {
+  const [selectedParticipants, setSelectedParticipants] = useState<string[]>([]);
+
+  const handleToggleSelectedParticipant = (participantId: string) => {
+    setSelectedParticipants(prev =>
+      prev.includes(participantId)
+        ? prev.filter(id => id !== participantId)
+        : [...prev, participantId]
+    );
+  };
+
+  const handleConfirmAddItem = () => {
+    if (!newItemName.trim() || !newItemPrice.trim()) {
+      toast.error("Por favor, preencha o nome e o preço do item.");
+      return;
+    }
+    const price = parseFloat(newItemPrice);
+    if (isNaN(price)) {
+      toast.error("O preço inserido não é válido.");
+      return;
+    }
+
+    addItemMutation.mutate(
+      { name: newItemName, price, participantIds: selectedParticipants },
+      {
+        onSuccess: () => {
+          setSelectedParticipants([]);
+        },
+      }
+    );
+  };
+
   return (
     <Card>
       <CardHeader><CardTitle className="flex items-center gap-2"><DollarSign className="text-primary"/>Lançar Itens</CardTitle></CardHeader>
       <CardContent>
-        <div className="flex flex-col md:flex-row gap-2 mb-4">
-          <Input type="text" value={newItemName} onChange={(e) => setNewItemName(e.target.value)} placeholder="Nome do item" disabled={addItemMutation.isPending} />
-          <Input type="number" value={newItemPrice} onChange={(e) => setNewItemPrice(e.target.value)} placeholder="Preço (R$)" disabled={addItemMutation.isPending}/>
-          <Button onClick={handleAddItem} className="w-full md:w-auto" disabled={addItemMutation.isPending}>
+        <div className="space-y-4">
+          <div className="flex flex-col md:flex-row gap-2">
+            <Input type="text" value={newItemName} onChange={(e) => setNewItemName(e.target.value)} placeholder="Nome do item" disabled={addItemMutation.isPending} />
+            <Input type="number" value={newItemPrice} onChange={(e) => setNewItemPrice(e.target.value)} placeholder="Preço (R$)" disabled={addItemMutation.isPending}/>
+          </div>
+          
+          {participants.length > 0 && (
+            <div>
+              <Label className="font-semibold">Quem vai rachar este item?</Label>
+              <p className="text-sm text-muted-foreground mb-2">Selecione os participantes. Se ninguém for selecionado, o item será adicionado sem ninguém para rachar.</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 py-2">
+                {participants.map(p => (
+                  <div key={p.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`new-item-participant-${p.id}`}
+                      checked={selectedParticipants.includes(p.id)}
+                      onCheckedChange={() => handleToggleSelectedParticipant(p.id)}
+                      disabled={addItemMutation.isPending}
+                    />
+                    <Label htmlFor={`new-item-participant-${p.id}`}>{p.name}</Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <Button onClick={handleConfirmAddItem} className="w-full" disabled={addItemMutation.isPending}>
             <PlusCircle className="mr-2 h-4 w-4"/>
-            {addItemMutation.isPending ? 'Lançando...' : 'Lançar'}
+            {addItemMutation.isPending ? 'Lançando...' : 'Lançar Item'}
           </Button>
         </div>
+
+        {items.length > 0 && <hr className="my-6" />}
+
         <div className="space-y-4">
           {items.map(item => (
             <div key={item.id} className="p-3 bg-muted/50 rounded-lg">

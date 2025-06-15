@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -75,7 +74,6 @@ const RachadinhaCalculator = ({ rachadinhaId, onBack }: RachadinhaCalculatorProp
           setNewItemName={setNewItemName}
           newItemPrice={newItemPrice}
           setNewItemPrice={setNewItemPrice}
-          handleAddItem={handleAddItem}
           addItemMutation={addItemMutation}
           removeItemMutation={removeItemMutation}
           toggleItemParticipantMutation={toggleItemParticipantMutation}
