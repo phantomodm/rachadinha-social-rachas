@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -17,15 +18,23 @@ const CheckoutPage = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (totalPrice > 0) {
+    if (totalPrice > 0 && cartItems.length > 0) {
+      const itemsForWoo = cartItems.map(item => ({
+        id: parseInt(item.id, 10), // Assumes product ID is an integer
+        quantity: item.quantity,
+      }));
+
       supabase.functions.invoke('create-payment-intent', {
-        body: { amount: totalPrice }
+        body: { 
+          amount: totalPrice,
+          items: itemsForWoo,
+        }
       }).then(({ data, error }) => {
         if (error) {
           console.error(error);
           toast({
-            title: "Erro",
-            description: "Não foi possível iniciar o checkout. Verifique se a chave secreta do Stripe está configurada.",
+            title: "Erro no Checkout",
+            description: error.message || "Não foi possível iniciar o checkout. Verifique sua conexão e tente novamente.",
             variant: "destructive",
           });
         }
@@ -34,7 +43,7 @@ const CheckoutPage = () => {
         }
       });
     }
-  }, [totalPrice, toast]);
+  }, [totalPrice, cartItems, toast]);
 
   const options: StripeElementsOptions = {
     clientSecret,

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, useStripe } from '@stripe/react-stripe-js';
@@ -7,6 +6,7 @@ import Header from '@/components/Header';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const stripePromise = loadStripe("pk_test_YOUR_PUBLISHABLE_KEY"); // IMPORTANT: Replace with your Stripe publishable key
 
@@ -34,9 +34,21 @@ const OrderConfirmationContent = () => {
         stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
             switch (paymentIntent?.status) {
                 case 'succeeded':
-                    setMessage('Pagamento bem-sucedido!');
+                    setMessage('Pagamento bem-sucedido! Finalizando seu pedido...');
                     setStatus('success');
                     clearCart();
+                    
+                    supabase.functions.invoke('update-woocommerce-order', {
+                      body: { payment_intent_id: paymentIntent.id }
+                    }).then(({ error }) => {
+                      if (error) {
+                        console.error("Failed to update WooCommerce order:", error);
+                        setMessage('Pagamento recebido! Porém, houve um problema ao confirmar seu pedido. Entre em contato com o suporte.');
+                      } else {
+                        setMessage('Pagamento bem-sucedido e pedido confirmado!');
+                      }
+                    });
+
                     break;
                 case 'processing':
                     setMessage("Seu pagamento está processando.");
