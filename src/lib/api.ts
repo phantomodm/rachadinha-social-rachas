@@ -209,6 +209,21 @@ export const getUserRoles = async (userId: string): Promise<string[]> => {
     return data.map((r: { role: string }) => r.role);
 };
 
+export const getVendorByUserId = async (userId: string): Promise<Vendor | null> => {
+    const { data, error } = await supabase
+        .from('vendors')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+    if (error) {
+        console.error("Error fetching vendor data:", error);
+        throw error;
+    }
+
+    return data;
+}
+
 export const getAppSettings = async (): Promise<AppSettings> => {
     const { data, error } = await supabase
         .from('app_settings')

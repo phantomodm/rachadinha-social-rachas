@@ -213,6 +213,38 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_pix_keys: {
+        Row: {
+          created_at: string
+          id: string
+          pix_key_type: string
+          pix_key_value: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          pix_key_type: string
+          pix_key_value: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          pix_key_type?: string
+          pix_key_value?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_pix_keys_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendors: {
         Row: {
           created_at: string
@@ -221,6 +253,12 @@ export type Database = {
           latitude: number | null
           longitude: number | null
           name: string
+          stripe_customer_id: string | null
+          subscription_ends_at: string | null
+          subscription_id: string | null
+          subscription_status: string | null
+          subscription_tier: string | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -229,6 +267,12 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           name: string
+          stripe_customer_id?: string | null
+          subscription_ends_at?: string | null
+          subscription_id?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -237,6 +281,12 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           name?: string
+          stripe_customer_id?: string | null
+          subscription_ends_at?: string | null
+          subscription_id?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
