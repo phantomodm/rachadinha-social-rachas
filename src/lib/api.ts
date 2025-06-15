@@ -171,3 +171,15 @@ export const toggleItemParticipant = async (itemId: string, participantId: strin
     }
 };
 
+export const getUserProfile = async (userId: string) => {
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', userId)
+        .single();
+    if (error) {
+        console.error("Error fetching user profile:", error);
+        return null;
+    }
+    return data;
+};

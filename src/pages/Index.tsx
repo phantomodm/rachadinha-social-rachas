@@ -1,3 +1,4 @@
+
 import RachadinhaManager from '@/components/RachadinhaManager';
 import { Button } from '@/components/ui/button';
 import { UtensilsCrossed, Users, Zap } from 'lucide-react';
@@ -5,6 +6,7 @@ import Header from '@/components/Header';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
+import RachadinhaNotifier from '@/components/RachadinhaNotifier';
 
 const Index = () => {
   const { session, loading } = useAuth();
@@ -16,6 +18,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
+      {session && <RachadinhaNotifier />}
       <main className="container mx-auto px-4 py-8 md:py-16">
         {/* Hero Section */}
         <section className="text-center py-16 md:py-24 animate-fade-in">
