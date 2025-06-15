@@ -12,6 +12,7 @@ import RachadinhaPage from "./pages/RachadinhaPage";
 import CreateRachadinhaPage from "./pages/CreateRachadinhaPage";
 // import AddParticipantsPage from "./pages/AddParticipantsPage"; // This is now removed
 import ContactsPage from "./pages/ContactsPage";
+import ProfilePage from "./pages/ProfilePage";
 import SupportPage from "./pages/SupportPage";
 import StorePage from "./pages/StorePage";
 import MainLayout from "./layouts/MainLayout";
@@ -39,6 +40,7 @@ const App = () => (
                 <Route path="/create-rachadinha" element={<CreateRachadinhaPage />} />
                 {/* <Route path="/rachadinha/:id/add-participants" element={<AddParticipantsPage />} /> */}
                 <Route path="/contacts" element={<ContactsPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/support" element={<SupportPage />} />
                 <Route path="/store" element={<StorePage />} />
                 <Route path="/cart" element={<CartPage />} />
