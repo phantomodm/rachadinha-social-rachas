@@ -1,46 +1,37 @@
-# Welcome to your Lovable project
+# 📱 Rachadinha - Split Expenses, Brazilian Style 🇧🇷
 
-## Project info
+**Rachadinha** is a social expense-splitting app designed to make sharing costs among friends, family, and coworkers intuitive and fair. Whether you're organizing a trip, a dinner, or a group purchase, *Rachadinha* helps everyone pay their fair share—with a good dose of Brazilian charm. 🌟
 
-**URL**: https://lovable.dev/projects/fd59ef28-ff9f-426d-826a-586aece31536
+---
 
-## How can I edit this code?
+## 🚀 Features
 
-There are several ways of editing your application.
+- 🔗 Create and manage groups
+- 🧾 Add shared expenses with participants and payers
+- 💸 Automatic calculation of who owes what
+- 📊 Group summaries for easy settling
+- 🔐 User authentication and data protection
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/fd59ef28-ff9f-426d-826a-586aece31536) and start prompting.
+## 🛠 Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+| Layer        | Technology       |
+|-------------|------------------|
+| Frontend     | React (with Nx workspace) |
+| Backend      | Java + Spring Boot       |
+| Database     | PostgreSQL (or other SQL via `create.sql`) |
+| Versioning & Automation | Husky, Commitlint, ESLint, Prettier |
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 📦 Getting Started
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 1. Clone the repo
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+git clone https://github.com/phantomodm/rachadinha-social-rachas.git
+cd rachadinha-social-rachas
 
 **Use GitHub Codespaces**
 
